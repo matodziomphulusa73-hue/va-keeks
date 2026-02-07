@@ -1,305 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>For Keneilwe</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone@7/babel.min.js"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@300;700&display=swap" rel="stylesheet">
     
     <style>
-      .font-script { font-family: 'Dancing Script', cursive; }
-      .font-sans { font-family: 'Montserrat', sans-serif; }
-      html { scroll-behavior: smooth; }
-      body { margin: 0; padding: 0; overflow-x: hidden; background: #1a0b2e; }
-      
-      @keyframes float {
-        0% { transform: translateY(0px) rotate(0deg); opacity: 0; }
-        10% { opacity: 0.8; }
-        90% { opacity: 0.8; }
-        100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
-      }
-      .heart-particle {
-        position: absolute;
-        color: rgba(255, 182, 193, 0.6);
-        pointer-events: none;
-        z-index: 15;
-        animation: float 15s linear infinite;
-      }
-      .heart-clip {
-        clip-path: url(#heart-clip);
-      }
-      .fade-enter-active {
-        animation: fadeIn 1.2s ease-out forwards;
-      }
-      @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-      .music-note {
-        animation: noteFloat 3s ease-in-out infinite;
-      }
-      @keyframes noteFloat {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-5px); }
-      }
-      ::selection {
-        background: #ec4899;
-        color: white;
-      }
+        body { margin: 0; background-color: #1a0b2e; color: white; font-family: 'Montserrat', sans-serif; overflow-x: hidden; }
+        .font-script { font-family: 'Dancing Script', cursive; }
+        .heart-clip { clip-path: path('M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.568-3.956 4.407-4.457 5.719-4.457 2.213 0 5.281 1.4 5.281 5.191 0 4.105-5.37 8.863-11 14.402z'); }
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+        .heart { position: absolute; color: rgba(255, 182, 193, 0.4); animation: float 10s linear infinite; z-index: 1; }
     </style>
-  </head>
-  <body>
+</head>
+<body>
     <div id="root"></div>
 
-    <svg width="0" height="0" style="position: absolute;">
-      <defs>
-        <clipPath id="heart-clip" clipPathUnits="objectBoundingBox">
-          <path d="M 0.5, 0.94 C 0.5, 0.94 0.01, 0.61 0.01, 0.35 C 0.01, 0.16 0.16, 0.01 0.35, 0.01 C 0.44, 0.01 0.5, 0.07 0.5, 0.07 C 0.5, 0.07 0.56, 0.01 0.65, 0.01 C 0.84, 0.01 0.99, 0.16 0.99, 0.35 C 0.99, 0.61 0.5, 0.94 0.5, 0.94 Z" />
-        </clipPath>
-      </defs>
-    </svg>
-
     <script type="text/babel">
-      const { useState, useEffect, useRef, useMemo } = React;
+        // This part is crucial - it tells the code where to find React
+        const { useState, useEffect, useRef, useMemo } = window.React;
 
-      const MILESTONES = [
-        {
-          title: "The Nervous Phase",
-          description: "Everything was brand new. Every text made my heart skip a beat, and I was so worried about saying the right thing. I already knew you were special.",
-          image: "https://images.unsplash.com/photo-1475924156734-496f6cac6ec1?q=80&w=1000&auto=format&fit=crop"
-        },
-        {
-          title: "Sunset Strolls",
-          description: "One of those perfect evenings where the sky matched our mood. I remember thinking I never wanted the walk to end.",
-          image: "https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=1000&auto=format&fit=crop",
-          video: "https://assets.mixkit.co/videos/preview/mixkit-couple-walking-on-the-beach-at-sunset-1522-large.mp4"
-        },
-        {
-          title: "Learning Your World",
-          description: "Our first long conversations late into the night. Finding out all your favorite things and realizing how much we have in common.",
-          image: "https://images.unsplash.com/photo-1516589174184-c68d8e5fecb1?q=80&w=1000&auto=format&fit=crop"
-        },
-        {
-          title: "Coffee Dates",
-          description: "Even the simplest moments like grabbing a latte become the highlight of my week because I'm with you.",
-          image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=1000&auto=format&fit=crop",
-          video: "https://assets.mixkit.co/videos/preview/mixkit-coffee-being-poured-into-a-cup-on-a-table-922-large.mp4"
-        },
-        {
-          title: "Building Dreams",
-          description: "Talking about the future and realizing you were in all of my plans. You became my best friend and my biggest supporter.",
-          image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=1000&auto=format&fit=crop"
-        },
-        {
-          title: "The Look in Your Eyes",
-          description: "That specific look you give me when you're laughing. It's my favorite thing in the whole world.",
-          image: "https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=1000&auto=format&fit=crop",
-          video: "https://assets.mixkit.co/videos/preview/mixkit-couple-in-love-enjoying-the-sunset-on-the-beach-2603-large.mp4"
-        }
-      ];
+        const App = () => {
+            const [entered, setEntered] = useState(false);
+            const [noPos, setNoPos] = useState({ x: 0, y: 0 });
+            const [yes, setYes] = useState(false);
+            const audioRef = useRef(null);
 
-      const ScrollReveal = ({ children, delay = 0, className = "" }) => {
-        const [isVisible, setIsVisible] = useState(false);
-        const domRef = useRef(null);
+            const moveNo = () => {
+                setNoPos({
+                    x: Math.random() * 200 - 100,
+                    y: Math.random() * 200 - 100
+                });
+            };
 
-        useEffect(() => {
-          const observer = new IntersectionObserver(entries => {
-            entries.forEach(entry => {
-              if (entry.isIntersecting) {
-                setTimeout(() => setIsVisible(true), delay);
-              }
-            });
-          }, { threshold: 0.1 });
+            const start = () => {
+                setEntered(true);
+                if (audioRef.current) audioRef.current.play().catch(e => console.log("Audio play blocked"));
+            };
 
-          const current = domRef.current;
-          if (current) observer.observe(current);
-          return () => { if (current) observer.unobserve(current); };
-        }, [delay]);
-
-        return (
-          <div ref={domRef} className={`transition-all duration-1000 transform ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"} ${className}`}>
-            {children}
-          </div>
-        );
-      };
-
-      const LandingPage = ({ onEnter }) => {
-        return (
-          <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gradient-to-br from-[#1a0b2e] via-[#4B0082] to-[#7B1FA2] text-center px-4">
-            <div className="animate-bounce mb-8"><span className="text-7xl">💌</span></div>
-            <h1 className="font-script text-7xl md:text-9xl text-white mb-6 drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)]">To Keneilwe Molebatsi</h1>
-            <p className="font-sans text-pink-200 text-lg md:text-2xl mb-12 max-w-md mx-auto italic opacity-90 tracking-wide font-light">A little something for the girl who means everything to me...</p>
-            <button onClick={onEnter} className="group relative px-12 py-5 bg-white text-purple-900 font-sans font-bold text-xl rounded-full overflow-hidden hover:scale-110 transition-all duration-500 uppercase tracking-widest shadow-[0_0_30px_rgba(255,255,255,0.3)]">
-              <span className="relative z-10">Click to read more</span>
-              <div className="absolute inset-0 bg-pink-100 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-            </button>
-          </div>
-        );
-      };
-
-      const Hero = () => {
-        const hearts = useMemo(() => [...Array(20)].map((_, i) => ({
-          left: `${Math.random() * 100}%`,
-          delay: `${Math.random() * 15}s`,
-          size: `${Math.random() * 1.5 + 0.5}rem`,
-        })), []);
-
-        return (
-          <section className="relative min-h-screen w-full flex flex-col items-center justify-center overflow-hidden py-24">
-            <div className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1501183007986-d0d080b147f9?q=80&w=2000&auto=format&fit=crop')" }} />
-            <div className="absolute inset-0 z-10 bg-gradient-to-b from-purple-950/70 via-pink-900/40 to-[#1a0b2e]" />
-            {hearts.map((heart, i) => (
-              <div key={i} className="heart-particle font-sans" style={{ left: heart.left, animationDelay: heart.delay, fontSize: heart.size, bottom: '-10%' }}>❤️</div>
-            ))}
-            <div className="relative z-20 text-center px-4 max-w-5xl">
-              <ScrollReveal>
-                <div className="relative w-56 h-56 md:w-72 md:h-72 mx-auto mb-12 group">
-                  <div className="w-full h-full bg-white/20 backdrop-blur-md p-3 heart-clip shadow-2xl">
-                    <div className="w-full h-full bg-pink-500/20 flex items-center justify-center overflow-hidden heart-clip">
-                      <img src="https://images.unsplash.com/photo-1516589174184-c68d8e5fecb1?q=80&w=800&auto=format&fit=crop" alt="Eneilwe" className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-125" />
+            if (!entered) {
+                return (
+                    <div className="h-screen flex flex-col items-center justify-center bg-gradient-to-b from-[#1a0b2e] to-[#4B0082] p-4">
+                        <div className="text-6xl mb-6">💌</div>
+                        <h1 className="font-script text-6xl text-center mb-8">To Keneilwe Molebatsi</h1>
+                        <button onClick={start} className="bg-white text-purple-900 px-8 py-4 rounded-full font-bold uppercase tracking-widest hover:scale-110 transition shadow-xl">
+                            Open My Letter
+                        </button>
                     </div>
-                  </div>
-                </div>
-                <h1 className="font-sans font-bold text-5xl md:text-8xl text-white mb-12 drop-shadow-[0_5px_15px_rgba(0,0,0,0.6)] leading-tight uppercase tracking-tighter">My World, <br/> My Everything</h1>
-              </ScrollReveal>
-              <ScrollReveal delay={400}>
-                <div className="bg-white/5 backdrop-blur-xl p-10 md:p-16 rounded-[4rem] border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
-                  <p className="font-sans text-lg md:text-2xl text-pink-50 font-light leading-relaxed md:leading-[2.5] text-left md:text-center italic">
-                    Six months ago, on August 14th, you walked into my life and my world got a little brighter and a lot more beautiful. What started as a simple moment has turned into a lifetime's worth of laughter and magic.<br /><br />
-                    Keneilwe, you are my favorite person, my safest place, and my best friend. Thank you for being the girl who makes everything better just by being you. i'd choose you all over again, every day. Happy Valentines My Love.
-                    <span className="block mt-10 font-sans font-bold text-3xl md:text-4xl text-white not-italic uppercase tracking-[0.2em]">I Love You.</span>
-                  </p>
-                </div>
-              </ScrollReveal>
-            </div>
-          </section>
-        );
-      };
+                );
+            }
 
-      const Stats = () => {
-        const statItems = [
-          { label: "Days Together", value: 184 },
-          { label: "Weeks Loved", value: 26 },
-          { label: "Hours of Magic", value: 4416 },
-        ];
-        return (
-          <section className="py-24 px-4">
-            <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12">
-              {statItems.map((stat, idx) => (
-                <ScrollReveal key={idx} delay={idx * 200}>
-                  <div className="group relative bg-white/5 backdrop-blur-lg p-12 rounded-[3rem] border border-white/10 text-center hover:bg-white/10 transition-all duration-500 overflow-hidden shadow-2xl">
-                    <h3 className="font-sans text-pink-300 text-sm uppercase tracking-[0.3em] mb-4">{stat.label}</h3>
-                    <p className="font-script text-6xl text-white font-bold drop-shadow-lg">{stat.value.toLocaleString()}</p>
-                  </div>
-                </ScrollReveal>
-              ))}
-            </div>
-          </section>
-        );
-      };
+            return (
+                <div className="min-h-screen bg-gradient-to-b from-[#1a0b2e] via-[#911f5e] to-[#ff7eb3] py-20 px-4 relative overflow-hidden">
+                    <audio ref={audioRef} loop src="music/amazulu.mp3.aac" />
+                    
+                    {/* Floating Hearts */}
+                    {[...Array(15)].map((_, i) => (
+                        <div key={i} className="heart" style={{ left: `${Math.random() * 100}%`, animationDelay: `${Math.random() * 10}s`, fontSize: `${Math.random() * 20 + 10}px` }}>❤️</div>
+                    ))}
 
-      const Timeline = () => {
-        return (
-          <section className="py-24 px-4">
-            <div className="max-w-5xl mx-auto">
-              <ScrollReveal><h2 className="font-sans font-bold text-4xl md:text-6xl text-center text-white mb-20 uppercase tracking-tighter">Our Sweetest Moments</h2></ScrollReveal>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                {MILESTONES.map((milestone, idx) => (
-                  <ScrollReveal key={idx} delay={idx * 150}>
-                    <div className="bg-white/5 backdrop-blur-md p-8 rounded-[3rem] border border-white/10 overflow-hidden group hover:bg-white/10 transition-all duration-500 shadow-2xl">
-                      <div className="relative h-72 mb-8 overflow-hidden rounded-[2rem] bg-black/40 shadow-inner">
-                        {milestone.video ? (
-                          <video autoPlay loop muted playsInline className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-1000">
-                            <source src={milestone.video} type="video/mp4" />
-                          </video>
+                    <div className="max-w-3xl mx-auto text-center relative z-10">
+                        <h1 className="text-5xl md:text-7xl font-bold mb-12 uppercase tracking-tighter">My Everything</h1>
+                        
+                        <div className="bg-white/10 backdrop-blur-md p-8 rounded-3xl border border-white/20 mb-20">
+                            <p className="text-xl md:text-2xl leading-relaxed italic text-pink-100">
+                                Six months ago, on August 14th, you walked into my life and made everything brighter. 
+                                Keneilwe, you are my favorite person and my best friend. i'd choose you all over again, every day. 
+                                Happy Valentines My Love.
+                            </p>
+                            <p className="text-4xl font-bold mt-8">I LOVE YOU.</p>
+                        </div>
+
+                        {!yes ? (
+                            <div className="py-20">
+                                <h2 className="text-4xl md:text-6xl font-bold mb-12">Will You Be My Valentine?</h2>
+                                <div className="flex flex-col md:flex-row items-center justify-center gap-8 min-h-[200px]">
+                                    <button onClick={() => setYes(true)} className="bg-pink-500 hover:bg-pink-400 text-white px-12 py-5 rounded-full text-2xl font-bold shadow-2xl transform hover:scale-110 transition">
+                                        YES!
+                                    </button>
+                                    <button 
+                                        onMouseEnter={moveNo}
+                                        style={{ transform: `translate(${noPos.x}px, ${noPos.y}px)` }}
+                                        className="bg-white/10 text-white/50 border border-white/20 px-8 py-3 rounded-full transition-all duration-200"
+                                    >
+                                        No
+                                    </button>
+                                </div>
+                            </div>
                         ) : (
-                          <img src={milestone.image} alt={milestone.title} className="w-full h-full object-cover opacity-70 group-hover:opacity-100 group-hover:scale-110 transition-all duration-1000" />
+                            <div className="py-20 animate-bounce">
+                                <div className="text-9xl mb-4">💖</div>
+                                <h2 className="text-6xl font-bold">YES FOREVER!</h2>
+                                <p className="text-xl mt-4">You've made me the luckiest person alive.</p>
+                            </div>
                         )}
-                      </div>
-                      <h3 className="font-sans font-bold text-2xl text-pink-300 mb-4 uppercase tracking-tight">{milestone.title}</h3>
-                      <p className="font-sans text-pink-50/70 leading-relaxed text-base italic">{milestone.description}</p>
                     </div>
-                  </ScrollReveal>
-                ))}
-              </div>
-            </div>
-          </section>
-        );
-      };
-
-      const Proposal = () => {
-        const [noPosition, setNoPosition] = useState({ x: 0, y: 0 });
-        const [showLove, setShowLove] = useState(false);
-        const moveNoButton = () => {
-          const x = Math.random() * (window.innerWidth < 768 ? 100 : 300) - 150;
-          const y = Math.random() * (window.innerWidth < 768 ? 100 : 300) - 150;
-          setNoPosition({ x, y });
-        };
-        if (showLove) {
-          return (
-            <section className="py-32 px-4 flex flex-col items-center justify-center min-h-[70vh] text-center">
-              <div className="text-9xl mb-12 animate-bounce">💖</div>
-              <h2 className="font-sans font-bold text-6xl md:text-8xl text-white mb-6 uppercase tracking-tighter">Yes Forever!</h2>
-              <p className="font-sans text-2xl text-pink-100 max-w-xl mx-auto font-light">You just made me the happiest person in the world Baby.</p>
-              <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="mt-16 px-12 py-4 bg-white/10 border border-white/30 text-white rounded-full font-sans hover:bg-white/20 transition-all uppercase tracking-[0.3em] text-sm">Return to Start</button>
-            </section>
-          );
-        }
-        return (
-          <section className="py-32 px-4 flex flex-col items-center text-center">
-            <h2 className="font-sans font-bold text-5xl md:text-9xl text-white mb-20 uppercase tracking-tighter">Will You Be My Valentine?</h2>
-            <div className="flex flex-col md:flex-row items-center justify-center gap-12 mt-10 min-h-[300px] w-full max-w-2xl mx-auto relative">
-              <button onClick={() => setShowLove(true)} className="px-16 py-6 bg-pink-600 hover:bg-pink-500 text-white text-3xl font-bold rounded-full shadow-lg transform hover:scale-125 transition-all duration-300 uppercase tracking-widest">Yes!</button>
-              <button onMouseEnter={moveNoButton} onClick={moveNoButton} style={{ transform: `translate(${noPosition.x}px, ${noPosition.y}px)`, transition: 'all 0.3s' }} className="px-12 py-4 bg-white/5 text-white/40 border border-white/10 rounded-full font-sans cursor-pointer uppercase tracking-widest text-sm">No</button>
-            </div>
-          </section>
-        );
-      };
-
-      const App = () => {
-        const [showMainContent, setShowMainContent] = useState(false);
-        const [isMuted, setIsMuted] = useState(false);
-        const audioRef = useRef(null);
-        const handleEnter = () => {
-          setShowMainContent(true);
-          if (audioRef.current) { audioRef.current.play().catch(e => console.log(e)); }
-        };
-        const toggleMute = () => {
-          if (audioRef.current) { audioRef.current.muted = !isMuted; setIsMuted(!isMuted); }
-        };
-        return (
-          <div className="min-h-screen bg-[#1a0b2e]">
-            {/* UPDATED MUSIC PATH */}
-            <audio ref={audioRef} loop src="music/amazulu.mp3.aac" />
-            {!showMainContent ? (
-              <LandingPage onEnter={handleEnter} />
-            ) : (
-              <div className="fade-enter-active bg-gradient-to-b from-[#1a0b2e] via-[#4a0e4e] via-[#911f5e] via-[#ce4a7e] to-[#ff7eb3]">
-                <button onClick={toggleMute} className="fixed top-6 right-6 z-50 p-4 bg-black/30 backdrop-blur-xl border border-white/10 rounded-full shadow-2xl group transition-all hover:scale-110">
-                  {isMuted ? <span className="text-2xl">🔇</span> : <div className="flex items-center gap-3"><span className="text-2xl music-note">🎵</span><span className="text-[10px] text-pink-200 uppercase tracking-widest font-bold hidden group-hover:block">Amazulu - Una Rams</span></div>}
-                </button>
-                <Hero />
-                <div className="max-w-7xl mx-auto">
-                  <Stats />
-                  <Timeline />
-                  <Proposal />
                 </div>
-                <footer className="py-20 text-center"><p className="text-white/20 text-xs tracking-[0.5em] uppercase">Created with Love for Keneilwe, By Omphulusa <3</p></footer>
-              </div>
-            )}
-          </div>
-        );
-      };
+            );
+        };
 
-      const root = ReactDOM.createRoot(document.getElementById('root'));
-      root.render(<App />);
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
     </script>
-  </body>
+</body>
 </html>
